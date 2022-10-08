@@ -22,14 +22,15 @@ impl Config {
     pub fn new(accounts: Option<Vec<Account>>) -> Config {
         Config { accounts }
     }
-    // valid toml &str -> Config
+    /// Deserializes a toml string into a Config object.
     pub fn deserialize(data: &str) -> Result<Config, toml::de::Error> {
         toml::from_str(data)
     }
-    // Config -> &str
+    /// Serializes a Config object into a string representation.
     pub fn serialize(&self) -> Result<String, toml::ser::Error> {
         toml::to_string(&self)
     }
+    /// Creates a new file at path if doesn't exist (doesn't create directories), serializes self (config object) and writes the contents of serialized config into that.
     pub fn write(&self, path: String) -> Result<(), Box<dyn std::error::Error>> {
         let toml = self.serialize()?;
 
