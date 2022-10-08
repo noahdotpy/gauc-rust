@@ -1,6 +1,8 @@
 use serde_derive::{Deserialize, Serialize};
-use std::{fs::File, io::Write};
-
+use std::{
+    fs::File,
+    io::{Read, Write},
+};
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Account {
     email: String,
@@ -15,12 +17,24 @@ impl Account {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Config {
-    accounts: Option<Vec<Account>>,
+    pub accounts: Option<Vec<Account>>,
 }
 
 impl Config {
     pub fn new(accounts: Option<Vec<Account>>) -> Config {
         Config { accounts }
+    }
+    /// Returns a string slice representation of the configuration file
+    pub fn parse_to_string(path: &str) -> Result<String, Box<dyn std::error::Error>> {
+        let mut result = String::new();
+        File::open(path)?.read_to_string(&mut result)?;
+        Ok(result)
+    }
+    /// Returns a config struct representation of the configuration file
+    pub fn parse_to_config(path: &str) -> Result<Config, Box<dyn std::error::Error>> {
+        let file = Config::parse_to_string(path)?;
+        let result = Config::deserialize(&file).unwrap();
+        Ok(result)
     }
     /// Deserializes a toml string into a Config object.
     pub fn deserialize(data: &str) -> Result<Config, toml::de::Error> {
