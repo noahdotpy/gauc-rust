@@ -1,4 +1,3 @@
-use serde::de::value::Error;
 use serde_derive::{Deserialize, Serialize};
 use std::{fs::File, io::Write};
 
@@ -31,17 +30,13 @@ impl Config {
     pub fn serialize(&self) -> Result<String, toml::ser::Error> {
         toml::to_string(&self)
     }
-    pub fn write(&self, path: String) -> Result<(), Error> {
-        // TODO: I should check for errors before I unwrap and return them
+    pub fn write(&self, path: String) -> Result<(), Box<dyn std::error::Error>> {
+        let toml = self.serialize()?;
 
-        let toml = self.serialize();
-        let toml = toml.unwrap();
-
-        let file = File::create(path);
-        let mut file = file.unwrap();
+        let mut file = File::create(path)?;
 
         // Write a &str into the file (ignoring the result).
-        writeln!(&mut file, "{toml}");
+        writeln!(&mut file, "{toml}")?;
         Ok(())
     }
 }
