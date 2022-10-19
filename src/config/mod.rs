@@ -41,6 +41,10 @@ impl Config {
     }
     /// Creates a new file at path if doesn't exist (doesn't create directories), serializes self (config object) and writes the contents of serialized config into that.
     pub fn write(&self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
+        let path = std::path::Path::new(path);
+        let prefix = path.parent().unwrap();
+        std::fs::create_dir_all(prefix).unwrap();
+
         let toml = self.serialize()?;
 
         let mut file = File::create(path)?;
