@@ -3,31 +3,25 @@ use std::{
     io::{self, Read, Write},
 };
 
-use gauc::config::{Account, Config};
+use gauc::config;
 
 fn main() -> io::Result<()> {
-    const CONFIG_PATH: &str = "test.toml";
-
     let mut config = String::new();
-    match &mut File::open(CONFIG_PATH) {
+    match &mut File::open(config::CONFIG_PATH) {
         Ok(v) => match v.read_to_string(&mut config) {
-            Ok(v) => v,
-            Err(_) => panic!("Couldn't open config file: {}", CONFIG_PATH),
+            Ok(_v) => (),
+            Err(e) => panic!("Couldn't open config file: {}", e),
         },
-        Err(_) => panic!("Couldn't open config file: {}", CONFIG_PATH),
+        Err(_e) => {
+            let config = config::Config::make_default();
+            println!("{:?}", config);
+            config.write(config::CONFIG_PATH).unwrap();
+        }
     };
 
-    let mut config = match Config::deserialize(&config) {
+    let mut config = match config::Config::deserialize(&config) {
         Ok(v) => v,
-        Err(_) => {
-            let config = Config::new(vec![]);
-            match config.write(CONFIG_PATH) {
-                Ok(_) => (),
-                Err(_) => panic!("Couldn't create new config file: {}", CONFIG_PATH),
-            };
-
-            config
-        }
+        Err(e) => panic!("toml deserialize error: {}", e),
     };
 
     let mut email_input = String::new();
@@ -42,9 +36,11 @@ fn main() -> io::Result<()> {
     io::stdin().read_line(&mut name_input).unwrap();
     let name_input = name_input.trim();
 
-    config.account.push(Account::new(email_input, name_input));
+    config
+        .account
+        .push(config::Account::new(email_input, name_input));
 
-    config.write(CONFIG_PATH).unwrap();
+    config.write(config::CONFIG_PATH).unwrap();
 
     Ok(())
 }

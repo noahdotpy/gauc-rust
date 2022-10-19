@@ -1,6 +1,8 @@
 use serde_derive::{Deserialize, Serialize};
 use std::{fs::File, io::Write};
 
+pub const CONFIG_PATH: &str = "./beepboop/test.toml";
+
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Account {
     email: String,
@@ -22,6 +24,10 @@ pub struct Config {
 }
 
 impl Config {
+    pub fn make_default() -> Config {
+        Config::new(vec![])
+    }
+    /// Create a new Config with function args and return
     pub fn new(account: Vec<Account>) -> Config {
         Config { account }
     }
