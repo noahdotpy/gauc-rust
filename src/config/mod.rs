@@ -9,15 +9,6 @@ pub struct Account {
     name: String,
 }
 
-impl Account {
-    pub fn new(email: &str, name: &str) -> Account {
-        Account {
-            email: email.to_string(),
-            name: name.to_string(),
-        }
-    }
-}
-
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Config {
     pub account: Option<Vec<Account>>,
@@ -25,7 +16,12 @@ pub struct Config {
 
 impl Config {
     pub fn make_default() -> Config {
-        Config { account: None }
+        Config {
+            account: Some(vec![Account {
+                email: String::from("noahdotpy@github.com"),
+                name: String::from("noahdotpy"),
+            }]),
+        }
     }
     /// Creates a new file at path if doesn't exist (doesn't create directories), serializes self (config object) and writes the contents of serialized config into that.
     pub fn write(&self, path: &str) -> Result<(), Box<dyn std::error::Error>> {
