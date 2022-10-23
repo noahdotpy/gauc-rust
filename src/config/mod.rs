@@ -18,8 +18,8 @@ impl Config {
     pub fn make_default() -> Config {
         Config {
             account: Some(vec![Account {
-                email: String::from("noahdotpy@github.com"),
-                name: String::from("noahdotpy"),
+                email: String::from("email@here.com"),
+                name: String::from("name_here"),
             }]),
         }
     }
