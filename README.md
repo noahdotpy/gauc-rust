@@ -1,1 +1,1 @@
-# Rust rewrite of [noahdotpy/gauc-golang](https://github.com/noahdotpy/gauc-golang)
+# Rust rewrite of [noahdotpy/gitauc-golang](https://github.com/noahdotpy/gitauc-golang) with some extra features probably
